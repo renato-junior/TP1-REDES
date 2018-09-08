@@ -8,10 +8,10 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.security.*;
+import java.math.*;
 
 import com.sun.javafx.runtime.VersionInfo;
 
-import java.math.*;
 
 public class Message{
     private long seq_number;               // número de sequencia da mensagem (unsigned 64 bits )
