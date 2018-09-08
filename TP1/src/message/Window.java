@@ -21,4 +21,21 @@ public class Window{
         this.lfa = rws - 1;
         this.nfe = 0;
     }
+
+    public Message get_next_message(){
+        return this.message_list[nfe];
+    }
+    public int get_next_message_index(){
+        return this.nfe;
+    }
+    public void add_new_message(Message new_message){
+
+    }
+    public Boolean is_full(){
+        return false;
+    }
+
+    public void message_received(Message received_message){
+
+    }
 }
