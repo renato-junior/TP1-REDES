@@ -28,8 +28,8 @@ public class Message{
     }
 
     private void calculate_verification_error(){
-        String verification_string = String(this.seq_number) + String(time_sent) + String(time_stamp);
-        verification_string += String(message_size) + String(message) + String(verification_code);
+        String verification_string = String(this.seq_number) + String(this.time_sent) + String(this.time_stamp);
+        verification_string += String(this.message_size) + String(this.message) + String(this.verification_code);
         MessageDigest m = MessageDigest.getInstance("MD5");
         m.update(s.getBytes(),0,s.lenght);
         this.verification_code = new BigInteger(1,m.digest());
@@ -60,6 +60,13 @@ public class Message{
     public void on_send(){
         get_message_times();
         calculate_verification_error();
+    }
+
+    public String get_message_string(){
+        String message_string = String(this.seq_number) + String(this.time_sent) + String(this.time_stamp);
+        message_string += String(this.message_size) + String(this.message) + String(this.verification_code);
+        message_string += String(this.verification_code);
+        return message_string;
     }
 
 }
