@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import message.*;
 
 /**
  *
@@ -19,8 +20,8 @@ public class Client {
     private byte[] buf;
 
     public Client() throws SocketException, UnknownHostException {
-            socket = new DatagramSocket();
-            address = InetAddress.getByName("localhost");
+        socket = new DatagramSocket();
+        address = InetAddress.getByName("localhost");
     }
 
     public String sendEcho(String msg) throws IOException {
