@@ -22,7 +22,29 @@ public class Message{
     private BigInteger verification_code;  // codigo de correção de erro (128 bits)
 
     Message(String complete_message){
-        
+        int begin_message = 0;
+        int end_message = complete_message.indexOf(";", 0);
+        this.seq_number = Long.parseLong(complete_message.substring(begin_message, end_message));
+
+        begin_message = end_message;
+        end_message = complete_message.indexOf(";", begin_message);
+        this.time_sent = Integer.parseInt(complete_message.substring(beginIndex, message_split));
+
+        begin_message = end_message;
+        end_message = complete_message.indexOf(";", begin_message);
+        this.time_stamp = Long.parseLong(complete_message.substring(beginIndex, message_split));        
+
+        begin_message = end_message;
+        end_message = complete_message.indexOf(";", begin_message);
+        this.message_size = Short.parseShort(complete_message.substring(beginIndex, message_split));
+
+        begin_message = end_message;
+        end_message = complete_message.indexOf(";", begin_message);
+        this.message = complete_message.substring(beginIndex, message_split);
+
+        begin_message = end_message;
+        end_message = complete_message.indexOf(";", begin_message);
+        this.verification_code = BigInteger(complete_message.substring(beginIndex, message_split));
     }
 
     Message(long seq_number,String message){
@@ -67,9 +89,9 @@ public class Message{
     }
 
     public String get_message_string(){
-        String message_string = String(this.seq_number) + String(this.time_sent) + String(this.time_stamp);
-        message_string += String(this.message_size) + String(this.message) + String(this.verification_code);
-        message_string += String(this.verification_code);
+        String message_string = String(this.seq_number) + ";" + String(this.time_sent) + ";" + String(this.time_stamp) + ";";
+        message_string += String(this.message_size) + ";" + String(this.message) + ";" + String(this.verification_code) + ";";
+        message_string += String(this.verification_code) + ";";
         return message_string;
     }
 
