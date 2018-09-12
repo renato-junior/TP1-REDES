@@ -21,6 +21,10 @@ public class Message{
     private String message;                // a string da mensagem (lenght < 2^14 bytes)
     private BigInteger verification_code;  // codigo de correção de erro (128 bits)
 
+    Message(String complete_message){
+        
+    }
+
     Message(long seq_number,String message){
         this.seq_number = seq_number;
         this.message = message;
