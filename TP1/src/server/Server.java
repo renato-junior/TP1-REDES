@@ -34,6 +34,7 @@ public class Server {
 
                 InetAddress address = packet.getAddress();
                 int port = packet.getPort();
+                
                 packet = new DatagramPacket(buf, buf.length, address, port);
                 String received = new String(packet.getData(), 0, packet.getLength());
 
