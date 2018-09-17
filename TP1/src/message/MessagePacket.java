@@ -10,7 +10,6 @@ public class MessagePacket {
     private long seqNumber;                 // número de sequencia da mensagem (unsigned 64 bits )
     private Instant time;                   // Time Stamp da mensagem
     private String message;                 // a string da mensagem (lenght < 2^14 bytes)
-    private byte[] md5;                     // codigo de correção de erro (128 bits)
 
     public static final long MAX_MESSAGE_SIZE = 32768;
 
@@ -49,7 +48,7 @@ public class MessagePacket {
     private byte[] buildMessageWithoutMD5InBytes() {
         int messageSize = 22 + this.message.length();
         ByteBuffer byteMessage = ByteBuffer.allocate(messageSize);
-        byteMessage.putLong(seqNumber);
+        byteMessage.putLong(getSeqNumber());
         byteMessage.putLong(time.getEpochSecond());
         byteMessage.putInt(time.getNano());
         byteMessage.putShort((short) this.message.length());
@@ -65,6 +64,14 @@ public class MessagePacket {
      */
     private byte[] computeMessageMD5(byte[] msg) throws NoSuchAlgorithmException {
         return java.security.MessageDigest.getInstance("MD5").digest(msg);
+    }
+
+    public long getSeqNumber() {
+        return seqNumber;
+    }
+
+    public void setSeqNumber(long seqNumber) {
+        this.seqNumber = seqNumber;
     }
 
 }
