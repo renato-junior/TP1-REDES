@@ -13,7 +13,7 @@ public class MessagePacket {
 
     public static final long MAX_MESSAGE_SIZE = 32768;
 
-    MessagePacket(long seqNumber, String message) {
+    public MessagePacket(long seqNumber, String message) {
         if (message.length() > MAX_MESSAGE_SIZE) { // Verifica se tamanho da mensagem é aceitável
             throw new IllegalArgumentException("Mensagem muito grande");
         }
