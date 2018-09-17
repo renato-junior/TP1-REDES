@@ -8,26 +8,20 @@ package client;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  *
  * @author renato
  */
 public class RunClient {
-    public static void main(String[] args) throws IOException {
-        Client client = null;
-        try {
-            client = new Client();
-        } catch (SocketException ex) {
-            System.err.println("Erro ao criar o cliente: "+ex.getLocalizedMessage());
-            System.exit(0);
-        } catch (UnknownHostException ex) {
-            System.err.println("Erro ao criar o cliente: "+ex.getLocalizedMessage());
+    public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
+        if(args.length != 6){
+            System.out.println("Parâmetros insuficientes.");
             System.exit(0);
         }
-        
-        System.out.println(client.sendEcho("Ola"));
-        System.out.println(client.sendEcho("eco"));
-        System.out.println(client.sendEcho("end"));
+        Client client = null;
+        client = new Client(args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), args[0], Integer.parseInt(args[4]), Double.parseDouble(args[5]));
+        client.runClient();
     }
 }

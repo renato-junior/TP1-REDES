@@ -47,12 +47,13 @@ public class SlidingWindow {
     public void confirmMessage(long msgSeqNum){
         int pos = (int) msgSeqNum - this.firstMessage;
         this.messageState[pos] = true;
+        this.slideWindow();
     }
     
     /**
      * Desliza a janela deslizante, tirando todos os primeiros pacotes que foram confirmado.
      */
-    public void slideWindow(){
+    private void slideWindow(){
         int maxPos = 0;
         for (int i = 0; i < this.windowSize; i++) { // Verifica até onde pode deslizar a janela
             if(this.messageState[i]){
