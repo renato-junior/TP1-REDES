@@ -1,7 +1,6 @@
 package client;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +25,7 @@ public class TimeoutThread extends Thread {
             MessagePacket mp = client.getClientWindow().verifyTimeout(client.getTimeout());
             if (mp != null) {
                 try {
+                    // TODO verificar concorrência
                     client.enviaMensagem(mp);
                 } catch (NoSuchAlgorithmException ex) {
                     Logger.getLogger(TimeoutThread.class.getName()).log(Level.SEVERE, null, ex);
