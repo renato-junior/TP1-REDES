@@ -44,7 +44,6 @@ public class Client {
         this.pError = pError;
         this.seqNumber = 1;
 
-//        this.socket.setSoTimeout(3000);
     }
 
     public void runClient() throws IOException, NoSuchAlgorithmException {
@@ -65,8 +64,8 @@ public class Client {
             // Recebe os ACKs
             byte[] buf = new byte[36];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
-
             socket.receive(packet);
+            
             AckPacket ack = new AckPacket(buf); // Cria o pacote do ack
             if (ack.checkAckMD5()) { // Verifica MD5
                 System.out.println("ACK OK " + ack.getSeqNumber());
@@ -75,7 +74,7 @@ public class Client {
                 System.out.println("ACK NÃO OK " + ack.getSeqNumber());
             }
 
-            if (this.getClientWindow().isEmpty()) { // Se não tem mais mensagens para ler do arquivo e a janela já está vazia, encerra o cliente
+            if (!this.file.hasNextLine() && this.getClientWindow().isEmpty()) { // Se não tem mais mensagens para ler do arquivo e a janela já está vazia, encerra o cliente
                 break;
             }
         }

@@ -1,9 +1,9 @@
 package client;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  *
@@ -11,14 +11,23 @@ import java.io.IOException;
  */
 public class FileUtils {
 
-    private BufferedReader fileReader;
+    private File file;
+    private Scanner fileReader;
 
     public FileUtils(String fileName) throws FileNotFoundException {
-        this.fileReader = new BufferedReader(new FileReader(fileName));
+        this.file = new File(fileName);
+        this.fileReader = new Scanner(file);
     }
     
     public String getLine() throws IOException {
-        return fileReader.readLine();
+        if(!hasNextLine()) {
+            return null;
+        }
+        return fileReader.nextLine();
+    }
+    
+    public boolean hasNextLine() {
+        return fileReader.hasNextLine();
     }
 
 }

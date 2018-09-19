@@ -31,7 +31,7 @@ public class SlidingWindow {
      * @param mp a mensagem a ser adicionada.
      * @throws IllegalArgumentException
      */
-    public void addMessage(MessagePacket mp) {
+    public synchronized void addMessage(MessagePacket mp) {
         if (this.isEmpty()) {
             this.firstMessage = (int) mp.getSeqNumber();
         }
@@ -49,9 +49,9 @@ public class SlidingWindow {
      *
      * @param msgSeqNum o seqNum da mensagem a ser confirmada.
      */
-    public void confirmMessage(long msgSeqNum) {
+    public synchronized void confirmMessage(long msgSeqNum) {
         int pos = (int) msgSeqNum - this.firstMessage;
-        if(pos >= 0 && pos < windowSize && this.messageList[pos].getSeqNumber() == msgSeqNum){
+        if (pos >= 0 && pos < windowSize && this.messageList[pos].getSeqNumber() == msgSeqNum) {
             this.messageState[pos] = true;
             this.slideWindow();
         }
@@ -61,7 +61,7 @@ public class SlidingWindow {
      * Desliza a janela deslizante, tirando todos os primeiros pacotes que foram
      * confirmado.
      */
-    private void slideWindow() {
+    private synchronized void slideWindow() {
         int maxPos = -1;
         for (int i = 0; i < this.windowSize; i++) { // Verifica até onde pode deslizar a janela
             if (this.messageState[i]) {
@@ -70,10 +70,15 @@ public class SlidingWindow {
                 break;
             }
         }
-        if(maxPos == -1){
+        if (maxPos == -1) {
             return;
         }
         // Desliza a janela
+        for (int i = 0; i < maxPos+1; i++) {
+            this.messageList[i] = null;
+            this.messageState[i] = false;
+            this.timeoutCounter[i] = 0;
+        }
         for (int i = maxPos + 1; i < this.windowSize; i++) {
             this.messageList[i - maxPos - 1] = this.messageList[i];
             this.messageState[i - maxPos - 1] = this.messageState[i];
@@ -93,7 +98,7 @@ public class SlidingWindow {
      *
      * @return true se a janela está cheia. False caso contrário.
      */
-    public boolean isFull() {
+    public synchronized boolean isFull() {
         return messageList[windowSize - 1] != null;
     }
 
@@ -102,11 +107,11 @@ public class SlidingWindow {
      *
      * @return true se a janela está vazia. False caso contrário.
      */
-    public boolean isEmpty() {
+    public synchronized boolean isEmpty() {
         return messageList[0] == null;
     }
 
-    public MessagePacket verifyTimeout(long timeout) {
+    public synchronized MessagePacket verifyTimeout(long timeout) {
         timeout = timeout * 1000; // Timeout é passado em segundos
         for (int i = 0; i < this.windowSize; i++) {
             if (this.messageList[i] != null && this.messageState[i] == false) {
