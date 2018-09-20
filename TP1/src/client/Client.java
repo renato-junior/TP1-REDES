@@ -64,7 +64,7 @@ public class Client {
                     this.uniqueLogMessagesSent++;
                     MessagePacket mp = new MessagePacket(getSeqNumber(), s);
                     this.getClientWindow().addMessage(mp); // Adiciona a mensagem na janela do cliente
-                    enviaMensagem(mp); // Envia o pacote com a mensagem
+                    sendMessage(mp); // Envia o pacote com a mensagem
                 } else {
                     break;
                 }
@@ -96,13 +96,17 @@ public class Client {
         socket.close();
     }
 
-    public void enviaMensagem(MessagePacket mp) throws NoSuchAlgorithmException, IOException {
-        byte[] buf = mp.buildMessageBytes();
+    public void sendMessage(MessagePacket mp) throws NoSuchAlgorithmException, IOException {
+        byte[] buf = mp.buildMessageBytes(!sendMessageWithError());
         DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddress, serverPort);
 
         socket.send(packet); // Envia o pacote com a mensagem
 
         this.totalLogMessagesSent++;
+    }
+    
+    private boolean sendMessageWithError() {
+        return Math.random() < this.pError;
     }
 
     private long getSeqNumber() {

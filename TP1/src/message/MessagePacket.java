@@ -5,14 +5,26 @@ import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 
+/**
+ *
+ * @author renato
+ */
 public class MessagePacket {
 
     private long seqNumber;                 // número de sequencia da mensagem (unsigned 64 bits )
     private Instant time;                   // Time Stamp da mensagem
     private String message;                 // a string da mensagem (lenght < 2^14 bytes)
 
+    /**
+     *
+     */
     public static final long MAX_MESSAGE_SIZE = 32768;
 
+    /**
+     *
+     * @param seqNumber
+     * @param message
+     */
     public MessagePacket(long seqNumber, String message) {
         if (message.length() > MAX_MESSAGE_SIZE) { // Verifica se tamanho da mensagem é aceitável
             throw new IllegalArgumentException("Mensagem muito grande");
@@ -25,12 +37,17 @@ public class MessagePacket {
     /**
      * Constrói a mensagem em bytes para ser enviada na rede.
      *
+     * @param keepMessageMD5 indica se o MD5 da mensagem será mantido ou corrompido propositalmente.
      * @return a mensagem em bytes.
      * @throws NoSuchAlgorithmException
      */
-    public byte[] buildMessageBytes() throws NoSuchAlgorithmException {
+    public byte[] buildMessageBytes(boolean keepMessageMD5) throws NoSuchAlgorithmException {
         byte[] messageWithoutMD5 = buildMessageWithoutMD5InBytes();
         byte[] messageMD5 = computeMessageMD5(messageWithoutMD5);
+        
+        if(!keepMessageMD5) {
+            messageMD5 = messWithMd5(messageMD5);
+        }
 
         ByteBuffer messageBuffer = ByteBuffer.allocate(messageWithoutMD5.length + messageMD5.length);
         messageBuffer.put(messageWithoutMD5);
@@ -66,6 +83,12 @@ public class MessagePacket {
         return java.security.MessageDigest.getInstance("MD5").digest(msg);
     }
 
+    /**
+     * Altera o MD5 para deixá-lo errado propositalmente.
+     * 
+     * @param md5 o md5 a ser alterado.
+     * @return o md5 alterado.
+     */
     public byte[] messWithMd5(byte[] md5) {
         byte[] modifiedMd5 = new byte[md5.length];
         for (int i = 0; i < md5.length; i++) {
