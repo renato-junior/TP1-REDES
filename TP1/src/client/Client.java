@@ -29,6 +29,10 @@ public class Client {
 
     private long seqNumber;
 
+    private int uniqueLogMessagesSent;
+    private int totalLogMessagesSent;
+    private int totalIncorrectMessagesSent;
+
     public Client(String serverAddress, int serverPort, int windowSize, String fileName, int timeout, double pError) throws SocketException, UnknownHostException {
         this.socket = new DatagramSocket();
         this.serverAddress = InetAddress.getByName(serverAddress);
@@ -44,16 +48,20 @@ public class Client {
         this.pError = pError;
         this.seqNumber = 1;
 
+        this.uniqueLogMessagesSent = 0;
+        this.totalLogMessagesSent = 0;
+        this.totalIncorrectMessagesSent = 0;
     }
 
     public void runClient() throws IOException, NoSuchAlgorithmException {
+        long startTime = System.currentTimeMillis();
         TimeoutThread timeoutThread = new TimeoutThread(this);
         timeoutThread.start();
         while (true) {
             while (!this.clientWindow.isFull()) { // Enquanto a janela do cliente não está cheia
                 String s = this.file.getLine(); // Lê a string do arquivo e cria mensagem com ela
                 if (s != null) {
-                    System.out.println("Mensagem = " + s);
+                    this.uniqueLogMessagesSent++;
                     MessagePacket mp = new MessagePacket(getSeqNumber(), s);
                     this.getClientWindow().addMessage(mp); // Adiciona a mensagem na janela do cliente
                     enviaMensagem(mp); // Envia o pacote com a mensagem
@@ -65,13 +73,13 @@ public class Client {
             byte[] buf = new byte[36];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
-            
+
             AckPacket ack = new AckPacket(buf); // Cria o pacote do ack
             if (ack.checkAckMD5()) { // Verifica MD5
-                System.out.println("ACK OK " + ack.getSeqNumber());
+//                System.out.println("ACK OK " + ack.getSeqNumber());
                 this.getClientWindow().confirmMessage(ack.getSeqNumber());
             } else {
-                System.out.println("ACK NÃO OK " + ack.getSeqNumber());
+//                System.out.println("ACK NÃO OK " + ack.getSeqNumber());
             }
 
             if (!this.file.hasNextLine() && this.getClientWindow().isEmpty()) { // Se não tem mais mensagens para ler do arquivo e a janela já está vazia, encerra o cliente
@@ -79,6 +87,8 @@ public class Client {
             }
         }
         this.close();
+        long totalExecutionTime = System.currentTimeMillis() - startTime;
+        System.out.println(this.uniqueLogMessagesSent + " " + this.totalLogMessagesSent + " " + this.totalIncorrectMessagesSent + " " + ((double) totalExecutionTime / 1000) + "s");
         System.exit(0);
     }
 
@@ -92,6 +102,7 @@ public class Client {
 
         socket.send(packet); // Envia o pacote com a mensagem
 
+        this.totalLogMessagesSent++;
     }
 
     private long getSeqNumber() {

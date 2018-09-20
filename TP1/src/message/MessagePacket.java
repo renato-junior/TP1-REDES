@@ -66,6 +66,14 @@ public class MessagePacket {
         return java.security.MessageDigest.getInstance("MD5").digest(msg);
     }
 
+    public byte[] messWithMd5(byte[] md5) {
+        byte[] modifiedMd5 = new byte[md5.length];
+        for (int i = 0; i < md5.length; i++) {
+            modifiedMd5[i] = (byte) 255;
+        }
+        return modifiedMd5;
+    }
+
     public long getSeqNumber() {
         return seqNumber;
     }
