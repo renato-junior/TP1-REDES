@@ -20,10 +20,10 @@ public class FileUtils {
         this.file = new File(fileName);
         this.fileReader = new Scanner(file);
     }
-    
+
     public FileUtils(String fileName, boolean noRead) throws FileNotFoundException {
         this.file = new File(fileName);
-        if(!noRead) {
+        if (!noRead) {
             this.fileReader = new Scanner(file);
         }
     }
@@ -38,7 +38,7 @@ public class FileUtils {
     public boolean hasNextLine() {
         return fileReader.hasNextLine();
     }
-    
+
     public void writeLine(String line) throws IOException {
         BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file, true));
         fileWriter.append(line);

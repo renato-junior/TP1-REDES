@@ -34,9 +34,13 @@ public class AckPacket {
      * @return o Ack em bytes.
      * @throws NoSuchAlgorithmException
      */
-    public byte[] buildAckBytes() throws NoSuchAlgorithmException {
+    public byte[] buildAckBytes(boolean keepAckMD5) throws NoSuchAlgorithmException {
         byte[] ackWithoutMD5 = buildAckWithoutMD5InBytes();
         byte[] ackMD5 = computeAckMD5(ackWithoutMD5);
+
+        if (!keepAckMD5) {
+            ackMD5 = messWithMd5(ackMD5);
+        }
 
         ByteBuffer messageBuffer = ByteBuffer.allocate(ackWithoutMD5.length + ackMD5.length);
         messageBuffer.put(ackWithoutMD5);
@@ -75,6 +79,20 @@ public class AckPacket {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Altera o MD5 para deixá-lo errado propositalmente.
+     *
+     * @param md5 o md5 a ser alterado.
+     * @return o md5 alterado.
+     */
+    public byte[] messWithMd5(byte[] md5) {
+        byte[] modifiedMd5 = new byte[md5.length];
+        for (int i = 0; i < md5.length; i++) {
+            modifiedMd5[i] = (byte) 255;
+        }
+        return modifiedMd5;
     }
 
     public long getSeqNumber() {

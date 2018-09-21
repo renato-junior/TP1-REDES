@@ -6,14 +6,16 @@
 package server;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  *
  * @author renato
  */
 public class RunServer {
-    public static void main(String[] args) throws IOException {
-        if(args.length != 4){
+
+    public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
+        if (args.length != 4) {
             System.out.println("Parâmetros insuficientes.");
             System.exit(0);
         }

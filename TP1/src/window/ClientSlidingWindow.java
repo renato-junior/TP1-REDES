@@ -74,7 +74,7 @@ public class ClientSlidingWindow {
             return;
         }
         // Desliza a janela
-        for (int i = 0; i < maxPos+1; i++) {
+        for (int i = 0; i < maxPos + 1; i++) {
             this.messageList[i] = null;
             this.messageState[i] = false;
             this.timeoutCounter[i] = 0;

@@ -13,8 +13,9 @@ import java.security.NoSuchAlgorithmException;
  * @author renato
  */
 public class RunClient {
+
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
-        if(args.length != 6){
+        if (args.length != 6) {
             System.out.println("Parâmetros insuficientes.");
             System.exit(0);
         }

@@ -23,24 +23,8 @@ public class ClientIdentifier {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ClientIdentifier other = (ClientIdentifier) obj;
-        if (this.port != other.port) {
-            return false;
-        }
-        if (!Objects.equals(this.address, other.address)) {
-            return false;
-        }
-        return true;
+    public String toString() {
+        return address.getHostAddress() + Integer.toString(port);
     }
 
     public InetAddress getAddress() {

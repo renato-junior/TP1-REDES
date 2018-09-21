@@ -28,21 +28,20 @@ public class ServerSlidingWindow {
      * @throws IllegalArgumentException
      */
     public synchronized void addMessage(MessagePacket mp) {
-        if (this.isEmpty()) {
-            this.firstMessage = (int) mp.getSeqNumber();
-        }
         int pos = (int) mp.getSeqNumber() - this.firstMessage;
         if (pos >= this.windowSize) {
             throw new IllegalArgumentException("Impossível adicionar mensagem na janela");
         }
         this.messageList[pos] = mp;
+        System.out.println("Added: " + mp.getSeqNumber());
     }
 
     /**
      * Desliza a janela deslizante, tirando todos os primeiros pacotes que foram
      * confirmado.
-     * 
-     * @return a lista de mensagens ordernadas para serem escritas no arquivo de saída.
+     *
+     * @return a lista de mensagens ordernadas para serem escritas no arquivo de
+     * saída.
      */
     public synchronized List<MessagePacket> slideWindow() {
         List<MessagePacket> messages = new ArrayList<>();
@@ -55,9 +54,11 @@ public class ServerSlidingWindow {
             }
         }
         if (maxPos != -1) {
+            int lastConfirmedMessage = (int) this.messageList[maxPos].getSeqNumber();
             // Desliza a janela
             for (int i = 0; i < maxPos + 1; i++) {
                 messages.add(this.messageList[i]);
+                System.out.println("Slided: " + this.messageList[i].getSeqNumber());
                 this.messageList[i] = null;
             }
             for (int i = maxPos + 1; i < this.windowSize; i++) {
@@ -65,10 +66,16 @@ public class ServerSlidingWindow {
                 this.messageList[i] = null;
             }
             // Verifica a nova primeira mensagem
-            if (!this.isEmpty()) {
-                this.firstMessage = (int) this.messageList[0].getSeqNumber();
+            this.firstMessage = lastConfirmedMessage + 1;
+        }
+        for (MessagePacket mp : this.messageList) {
+            if (mp != null) {
+                System.out.print(mp.getSeqNumber() + " ");
+            } else {
+                System.out.print("* ");
             }
         }
+        System.out.println("");
         return messages;
     }
 
@@ -87,8 +94,24 @@ public class ServerSlidingWindow {
      * @return true se a janela está vazia. False caso contrário.
      */
     public synchronized boolean isEmpty() {
-        return messageList[0] == null;
+        for (MessagePacket mp : this.messageList) {
+            if (mp != null) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    
+    public synchronized boolean isMessageValid(MessagePacket mp) {
+        if (mp.getSeqNumber() >= this.firstMessage && mp.getSeqNumber() < this.firstMessage + this.windowSize) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public int getFirstMessage() {
+        return firstMessage;
+    }
+
 }

@@ -29,7 +29,7 @@ public class MessagePacket {
         this.message = message; // Define o conteúdo da mensagem
         time = Instant.now(); // Cria o timestamp da mensagem
     }
-    
+
     public MessagePacket(byte[] messageInBytes) {
         ByteBuffer byteBuffer = ByteBuffer.wrap(messageInBytes);
         this.seqNumber = byteBuffer.getLong();
@@ -45,15 +45,16 @@ public class MessagePacket {
     /**
      * Constrói a mensagem em bytes para ser enviada na rede.
      *
-     * @param keepMessageMD5 indica se o MD5 da mensagem será mantido ou corrompido propositalmente.
+     * @param keepMessageMD5 indica se o MD5 da mensagem será mantido ou
+     * corrompido propositalmente.
      * @return a mensagem em bytes.
      * @throws NoSuchAlgorithmException
      */
     public byte[] buildMessageBytes(boolean keepMessageMD5) throws NoSuchAlgorithmException {
         byte[] messageWithoutMD5 = buildMessageWithoutMD5InBytes();
         byte[] messageMD5 = computeMessageMD5(messageWithoutMD5);
-        
-        if(!keepMessageMD5) {
+
+        if (!keepMessageMD5) {
             messageMD5 = messWithMd5(messageMD5);
         }
 
@@ -93,7 +94,7 @@ public class MessagePacket {
 
     /**
      * Altera o MD5 para deixá-lo errado propositalmente.
-     * 
+     *
      * @param md5 o md5 a ser alterado.
      * @return o md5 alterado.
      */
@@ -104,7 +105,7 @@ public class MessagePacket {
         }
         return modifiedMd5;
     }
-    
+
     public boolean checkMessageMD5() throws NoSuchAlgorithmException {
         if (java.util.Arrays.equals(md5, computeMessageMD5(buildMessageWithoutMD5InBytes()))) {
             return true;

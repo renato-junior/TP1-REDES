@@ -27,7 +27,7 @@ public class Server {
     private int windowSize;
     private double pError;
 
-    private HashMap<ClientIdentifier, ServerSlidingWindow> clientsWindows;
+    private HashMap<String, ServerSlidingWindow> clientsWindows;
 
     public Server(String fileName, int port, int windowSize, double pError) {
         try {
@@ -47,7 +47,7 @@ public class Server {
         this.clientsWindows = new HashMap<>();
     }
 
-    public void runServer() throws IOException {
+    public void runServer() throws IOException, NoSuchAlgorithmException {
         while (true) {
             // Cria o buffer e o pacote
             byte[] buffer = new byte[(int) MessagePacket.MAX_MESSAGE_SIZE];
@@ -62,18 +62,25 @@ public class Server {
             ClientIdentifier client = new ClientIdentifier(address, port);
 
             verifyIfClientIsInList(client);
-            
+
             // Trata o conteúdo do pacote
             MessagePacket mp = new MessagePacket(buffer);
-            try {
-                this.clientsWindows.get(client).addMessage(mp);
-                sendAckMessage(client, mp);
-            } catch (IllegalArgumentException | NoSuchAlgorithmException ex) {
+            if (mp.checkMessageMD5()) {
+                try {
+                    if (this.clientsWindows.get(client.toString()).isMessageValid(mp)) {
+                        this.clientsWindows.get(client.toString()).addMessage(mp);
+                        sendAckMessage(client, mp);
+                    } else if (mp.getSeqNumber() < this.clientsWindows.get(client.toString()).getFirstMessage()) {
+                        sendAckMessage(client, mp);
+                    }
 
-            }
-            List<MessagePacket> messagesToWrite = this.clientsWindows.get(client).slideWindow();
-            for(MessagePacket m : messagesToWrite) {
-                this.outputfile.writeLine(m.getMessage());
+                } catch (IllegalArgumentException | NoSuchAlgorithmException ex) {
+
+                }
+                List<MessagePacket> messagesToWrite = this.clientsWindows.get(client.toString()).slideWindow();
+                for (MessagePacket m : messagesToWrite) {
+                    this.outputfile.writeLine(m.getMessage());
+                }
             }
         }
     }
@@ -85,17 +92,28 @@ public class Server {
      * @param ci o identificador do cliente.
      */
     private void verifyIfClientIsInList(ClientIdentifier ci) {
-        if (!clientsWindows.containsKey(ci)) {
-            clientsWindows.put(ci, new ServerSlidingWindow(windowSize));
+        if (!clientsWindows.containsKey(ci.toString())) {
+            clientsWindows.put(ci.toString(), new ServerSlidingWindow(windowSize));
         }
     }
 
     private void sendAckMessage(ClientIdentifier client, MessagePacket mp) throws NoSuchAlgorithmException, IOException {
         AckPacket ack = new AckPacket(mp.getSeqNumber());
-        byte[] buf = ack.buildAckBytes();
+        boolean ackError = sendAckWithError();
+        byte[] buf = ack.buildAckBytes(!ackError);
         DatagramPacket packet = new DatagramPacket(buf, buf.length, client.getAddress(), client.getPort());
 
+        if (ackError) {
+            System.out.println("Sending Ack with error: " + mp.getSeqNumber());
+        } else {
+            System.out.println("Sending Ack: " + mp.getSeqNumber());
+        }
+
         socket.send(packet); // Envia o pacote o Ack
+    }
+
+    private boolean sendAckWithError() {
+        return Math.random() < this.pError;
     }
 
 }

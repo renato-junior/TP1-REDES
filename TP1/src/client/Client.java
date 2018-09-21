@@ -15,6 +15,7 @@ import message.AckPacket;
 import message.MessagePacket;
 import window.ClientSlidingWindow;
 //import message.*;
+
 /**
  *
  * @author renato
@@ -106,7 +107,7 @@ public class Client {
 
         this.totalLogMessagesSent++;
     }
-    
+
     private boolean sendMessageWithError() {
         return Math.random() < this.pError;
     }
