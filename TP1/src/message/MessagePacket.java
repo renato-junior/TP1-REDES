@@ -14,17 +14,13 @@ public class MessagePacket {
     private long seqNumber;                 // número de sequencia da mensagem (unsigned 64 bits )
     private Instant time;                   // Time Stamp da mensagem
     private String message;                 // a string da mensagem (lenght < 2^14 bytes)
+    private byte[] md5;
 
     /**
      *
      */
     public static final long MAX_MESSAGE_SIZE = 32768;
 
-    /**
-     *
-     * @param seqNumber
-     * @param message
-     */
     public MessagePacket(long seqNumber, String message) {
         if (message.length() > MAX_MESSAGE_SIZE) { // Verifica se tamanho da mensagem é aceitável
             throw new IllegalArgumentException("Mensagem muito grande");
@@ -32,6 +28,18 @@ public class MessagePacket {
         this.seqNumber = seqNumber;
         this.message = message; // Define o conteúdo da mensagem
         time = Instant.now(); // Cria o timestamp da mensagem
+    }
+    
+    public MessagePacket(byte[] messageInBytes) {
+        ByteBuffer byteBuffer = ByteBuffer.wrap(messageInBytes);
+        this.seqNumber = byteBuffer.getLong();
+        this.time = Instant.ofEpochSecond(byteBuffer.getLong(), byteBuffer.getInt());
+        short messageSize = byteBuffer.getShort();
+        byte[] messageContentBytes = new byte[messageSize];
+        byteBuffer.get(messageContentBytes, 0, messageSize);
+        this.message = new String(messageContentBytes, Charset.forName("US-ASCII"));
+        this.md5 = new byte[16];
+        byteBuffer.get(this.md5, 0, 16);
     }
 
     /**
@@ -63,13 +71,13 @@ public class MessagePacket {
      * @return a mesagem, sem o MD5, em bytes.
      */
     private byte[] buildMessageWithoutMD5InBytes() {
-        int messageSize = 22 + this.message.length();
+        int messageSize = 22 + this.getMessage().length();
         ByteBuffer byteMessage = ByteBuffer.allocate(messageSize);
         byteMessage.putLong(getSeqNumber());
         byteMessage.putLong(time.getEpochSecond());
         byteMessage.putInt(time.getNano());
-        byteMessage.putShort((short) this.message.length());
-        byteMessage.put(this.message.getBytes(Charset.forName("US-ASCII")));
+        byteMessage.putShort((short) this.getMessage().length());
+        byteMessage.put(this.getMessage().getBytes(Charset.forName("US-ASCII")));
         return byteMessage.array();
     }
 
@@ -96,6 +104,14 @@ public class MessagePacket {
         }
         return modifiedMd5;
     }
+    
+    public boolean checkMessageMD5() throws NoSuchAlgorithmException {
+        if (java.util.Arrays.equals(md5, computeMessageMD5(buildMessageWithoutMD5InBytes()))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public long getSeqNumber() {
         return seqNumber;
@@ -103,6 +119,10 @@ public class MessagePacket {
 
     public void setSeqNumber(long seqNumber) {
         this.seqNumber = seqNumber;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
 }

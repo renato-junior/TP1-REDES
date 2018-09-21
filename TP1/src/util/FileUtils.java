@@ -1,7 +1,9 @@
-package client;
+package util;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -19,15 +21,29 @@ public class FileUtils {
         this.fileReader = new Scanner(file);
     }
     
+    public FileUtils(String fileName, boolean noRead) throws FileNotFoundException {
+        this.file = new File(fileName);
+        if(!noRead) {
+            this.fileReader = new Scanner(file);
+        }
+    }
+
     public String getLine() throws IOException {
-        if(!hasNextLine()) {
+        if (!hasNextLine()) {
             return null;
         }
         return fileReader.nextLine();
     }
-    
+
     public boolean hasNextLine() {
         return fileReader.hasNextLine();
+    }
+    
+    public void writeLine(String line) throws IOException {
+        BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file, true));
+        fileWriter.append(line);
+        fileWriter.append('\n');
+        fileWriter.close();
     }
 
 }

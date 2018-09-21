@@ -1,5 +1,6 @@
 package client;
 
+import util.FileUtils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -8,11 +9,12 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import message.AckPacket;
 import message.MessagePacket;
-import window.SlidingWindow;
+import window.ClientSlidingWindow;
 //import message.*;
-
 /**
  *
  * @author renato
@@ -22,7 +24,7 @@ public class Client {
     private DatagramSocket socket;
     private InetAddress serverAddress;
     private int serverPort;
-    private SlidingWindow clientWindow;
+    private ClientSlidingWindow clientWindow;
     private FileUtils file;
     private int timeout;
     private double pError;
@@ -37,7 +39,7 @@ public class Client {
         this.socket = new DatagramSocket();
         this.serverAddress = InetAddress.getByName(serverAddress);
         this.serverPort = serverPort;
-        this.clientWindow = new SlidingWindow(windowSize);
+        this.clientWindow = new ClientSlidingWindow(windowSize);
         try {
             this.file = new FileUtils(fileName);
         } catch (FileNotFoundException ex) {
@@ -115,7 +117,7 @@ public class Client {
         return sn;
     }
 
-    public SlidingWindow getClientWindow() {
+    public ClientSlidingWindow getClientWindow() {
         return clientWindow;
     }
 

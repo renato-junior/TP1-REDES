@@ -2,7 +2,7 @@ package window;
 
 import message.MessagePacket;
 
-public class SlidingWindow {
+public class ClientSlidingWindow {
 
     private MessagePacket[] messageList;        // lista de mensagens na janela
     private boolean[] messageState;             // lista de confirmação de mensagens
@@ -10,7 +10,7 @@ public class SlidingWindow {
     private int windowSize;                     // tamanho da janela
     private int firstMessage;                  // seqNumber na primeira mensagem na janela
 
-    public SlidingWindow(int windowSize) {
+    public ClientSlidingWindow(int windowSize) {
         this.windowSize = windowSize;
         this.firstMessage = 1;
 
