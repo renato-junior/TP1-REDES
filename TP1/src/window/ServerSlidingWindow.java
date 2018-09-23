@@ -33,7 +33,6 @@ public class ServerSlidingWindow {
             throw new IllegalArgumentException("Impossível adicionar mensagem na janela");
         }
         this.messageList[pos] = mp;
-        System.out.println("Added: " + mp.getSeqNumber());
     }
 
     /**
@@ -58,7 +57,6 @@ public class ServerSlidingWindow {
             // Desliza a janela
             for (int i = 0; i < maxPos + 1; i++) {
                 messages.add(this.messageList[i]);
-                System.out.println("Slided: " + this.messageList[i].getSeqNumber());
                 this.messageList[i] = null;
             }
             for (int i = maxPos + 1; i < this.windowSize; i++) {
@@ -68,14 +66,6 @@ public class ServerSlidingWindow {
             // Verifica a nova primeira mensagem
             this.firstMessage = lastConfirmedMessage + 1;
         }
-        for (MessagePacket mp : this.messageList) {
-            if (mp != null) {
-                System.out.print(mp.getSeqNumber() + " ");
-            } else {
-                System.out.print("* ");
-            }
-        }
-        System.out.println("");
         return messages;
     }
 

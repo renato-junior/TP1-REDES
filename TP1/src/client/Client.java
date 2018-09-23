@@ -100,11 +100,15 @@ public class Client {
     }
 
     public void sendMessage(MessagePacket mp) throws NoSuchAlgorithmException, IOException {
-        byte[] buf = mp.buildMessageBytes(!sendMessageWithError());
+        boolean msgError = sendMessageWithError();
+        byte[] buf = mp.buildMessageBytes(!msgError);
         DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddress, serverPort);
 
         socket.send(packet); // Envia o pacote com a mensagem
 
+        if(msgError == true) {
+            this.totalIncorrectMessagesSent++;
+        }
         this.totalLogMessagesSent++;
     }
 

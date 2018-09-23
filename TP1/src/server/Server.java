@@ -103,12 +103,6 @@ public class Server {
         byte[] buf = ack.buildAckBytes(!ackError);
         DatagramPacket packet = new DatagramPacket(buf, buf.length, client.getAddress(), client.getPort());
 
-        if (ackError) {
-            System.out.println("Sending Ack with error: " + mp.getSeqNumber());
-        } else {
-            System.out.println("Sending Ack: " + mp.getSeqNumber());
-        }
-
         socket.send(packet); // Envia o pacote o Ack
     }
 
