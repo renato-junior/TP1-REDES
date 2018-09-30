@@ -9,12 +9,9 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import message.AckPacket;
 import message.MessagePacket;
 import window.ClientSlidingWindow;
-//import message.*;
 
 /**
  *
@@ -27,8 +24,8 @@ public class Client {
     private int serverPort;
     private ClientSlidingWindow clientWindow;
     private FileUtils file;
-    private int timeout;
-    private double pError;
+    private final int timeout;
+    private final double pError;
 
     private long seqNumber;
 
@@ -56,6 +53,15 @@ public class Client {
         this.totalIncorrectMessagesSent = 0;
     }
 
+    /**
+     * Executa o cliente. O cliente irá ler o arquivo passado como parâmetro
+     * para o construtor, e para cada linha, cria um MessagePacket e o envia
+     * para o servidor. Ele também irá receber as confirmações do servidor e
+     * controlar o timeout dos pacotes enviados.
+     *
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     */
     public void runClient() throws IOException, NoSuchAlgorithmException {
         long startTime = System.currentTimeMillis();
         TimeoutThread timeoutThread = new TimeoutThread(this);
@@ -99,6 +105,14 @@ public class Client {
         socket.close();
     }
 
+    /**
+     * Envia a mensagem para o servidor. Essa mensagem pode ser enviada com erro
+     * no MD5, com base no método sendMessageWithError().
+     *
+     * @param mp o pacote da mensagem a ser enviada.
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     */
     public void sendMessage(MessagePacket mp) throws NoSuchAlgorithmException, IOException {
         boolean msgError = sendMessageWithError();
         byte[] buf = mp.buildMessageBytes(!msgError);
@@ -106,7 +120,7 @@ public class Client {
 
         socket.send(packet); // Envia o pacote com a mensagem
 
-        if(msgError == true) {
+        if (msgError == true) {
             this.totalIncorrectMessagesSent++;
         }
         this.totalLogMessagesSent++;

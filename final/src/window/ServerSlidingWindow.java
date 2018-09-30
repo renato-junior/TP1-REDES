@@ -6,8 +6,8 @@ import message.MessagePacket;
 
 public class ServerSlidingWindow {
 
-    private MessagePacket[] messageList;        // lista de mensagens na janela
-    private int windowSize;                     // tamanho da janela
+    private final MessagePacket[] messageList;        // lista de mensagens na janela
+    private final int windowSize;                     // tamanho da janela
     private int firstMessage;                  // seqNumber na primeira mensagem na janela
 
     public ServerSlidingWindow(int windowSize) {

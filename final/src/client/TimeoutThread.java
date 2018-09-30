@@ -27,9 +27,7 @@ public class TimeoutThread extends Thread {
                 try {
                     // TODO verificar concorrência
                     client.sendMessage(mp);
-                } catch (NoSuchAlgorithmException ex) {
-                    Logger.getLogger(TimeoutThread.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
+                } catch (NoSuchAlgorithmException | IOException ex) {
                     Logger.getLogger(TimeoutThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

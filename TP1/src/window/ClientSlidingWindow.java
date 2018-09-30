@@ -4,10 +4,10 @@ import message.MessagePacket;
 
 public class ClientSlidingWindow {
 
-    private MessagePacket[] messageList;        // lista de mensagens na janela
-    private boolean[] messageState;             // lista de confirmação de mensagens
-    private long[] timeoutCounter;               // Vetor para fazer o controle do timeout
-    private int windowSize;                     // tamanho da janela
+    private final MessagePacket[] messageList;        // lista de mensagens na janela
+    private final boolean[] messageState;             // lista de confirmação de mensagens
+    private final long[] timeoutCounter;               // Vetor para fazer o controle do timeout
+    private final int windowSize;                     // tamanho da janela
     private int firstMessage;                  // seqNumber na primeira mensagem na janela
 
     public ClientSlidingWindow(int windowSize) {

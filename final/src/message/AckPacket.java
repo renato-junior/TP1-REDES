@@ -1,7 +1,6 @@
 package message;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 
@@ -31,6 +30,8 @@ public class AckPacket {
     /**
      * Constrói o Ack em bytes para ser enviada na rede.
      *
+     * @param keepAckMD5 indica se o MD5 do Ack será mantido ou corrompido
+     * propositalmente.
      * @return o Ack em bytes.
      * @throws NoSuchAlgorithmException
      */

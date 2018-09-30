@@ -9,8 +9,6 @@ import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import message.AckPacket;
 import message.MessagePacket;
 import util.FileUtils;
@@ -24,8 +22,8 @@ public class Server {
 
     private DatagramSocket socket;
     private FileUtils outputfile;
-    private int windowSize;
-    private double pError;
+    private final int windowSize;
+    private final double pError;
 
     private HashMap<String, ServerSlidingWindow> clientsWindows;
 
