@@ -12,7 +12,7 @@ public class ServerSlidingWindow {
 
     public ServerSlidingWindow(int windowSize) {
         this.windowSize = windowSize;
-        this.firstMessage = 1;
+        this.firstMessage = 0;
 
         // Inicializa vetores
         this.messageList = new MessagePacket[this.windowSize];
@@ -37,7 +37,7 @@ public class ServerSlidingWindow {
 
     /**
      * Desliza a janela deslizante, tirando todos os primeiros pacotes que foram
-     * confirmado.
+     * confirmados.
      *
      * @return a lista de mensagens ordernadas para serem escritas no arquivo de
      * saída.
