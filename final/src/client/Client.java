@@ -49,7 +49,7 @@ public class Client {
         }
         this.timeout = timeout;
         this.pError = pError;
-        this.seqNumber = 1;
+        this.seqNumber = 0;
 
         this.uniqueLogMessagesSent = 0;
         this.totalLogMessagesSent = 0;

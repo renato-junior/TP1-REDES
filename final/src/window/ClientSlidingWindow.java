@@ -12,7 +12,7 @@ public class ClientSlidingWindow {
 
     public ClientSlidingWindow(int windowSize) {
         this.windowSize = windowSize;
-        this.firstMessage = 1;
+        this.firstMessage = 0;
 
         // Inicializa vetores
         this.messageList = new MessagePacket[this.windowSize];
