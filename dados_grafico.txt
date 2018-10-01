@@ -1,0 +1,13 @@
+Probabilidade de erro X Número de retransmissão de mensagens
+Wrt = 5
+PServidor = 0
+Tout = 3
+Perror = 0.0	Retransmissões = 0	Tempo = 0.055
+Perror = 0.1	Retransmissões = 4	Tempo = 9.051
+Perror = 0.2	Retransmissões = 9	Tempo = 21.059
+Perror = 0.3	Retransmissões = 24	Tempo = 39.053
+Perror = 0.4	Retransmissões = 26	Tempo = 45.057
+Perror = 0.5	Retransmissões = 45	Tempo = 66.051
+Perror = 0.6	Retransmissões = 86	Tempo = 123.077
+Perror = 0.7	Retransmissões = 99	Tempo = 114.074
+Perror = 0.8	Retransmissões = 182	Tempo = 252.113
